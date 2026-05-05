@@ -1,0 +1,40 @@
+{
+  "properties": {
+    "displayName": "Storage accounts must disable public blob access",
+    "description": "Denies creation or update of storage accounts that have allowBlobPublicAccess set to true. Public blob containers expose data to anonymous access; this is rarely intentional and frequently a misconfiguration.",
+    "mode": "All",
+    "policyType": "Custom",
+    "metadata": {
+      "category": "Storage",
+      "version": "1.0.0"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "The effect determines what happens when the policy rule is evaluated to match"
+        },
+        "allowedValues": ["Audit", "Deny", "Disabled"],
+        "defaultValue": "Deny"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Storage/storageAccounts"
+          },
+          {
+            "field": "Microsoft.Storage/storageAccounts/allowBlobPublicAccess",
+            "equals": true
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]"
+      }
+    }
+  }
+}
