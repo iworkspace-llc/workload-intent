@@ -20,17 +20,6 @@
           "version": "1.0.0",
           "source": "iworkspace-llc/workload-intent"
         },
-        "parameters": {
-          "effect": {
-            "type": "String",
-            "metadata": {
-              "displayName": "Effect",
-              "description": "Policy effect"
-            },
-            "allowedValues": ["Audit", "Deny", "Disabled"],
-            "defaultValue": "Deny"
-          }
-        },
         "policyRule": {
           "if": {
             "allOf": [
@@ -45,7 +34,7 @@
             ]
           },
           "then": {
-            "effect": "[[parameters('effect')]]"
+            "effect": "Deny"
           }
         }
       }
@@ -61,11 +50,6 @@
         "displayName": "iWorkspace: Deny storage public blob access",
         "description": "Assignment of the deny-storage-public-blob-access policy from workload-intent.",
         "policyDefinitionId": "[resourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName'))]",
-        "parameters": {
-          "effect": {
-            "value": "Deny"
-          }
-        },
         "metadata": {
           "source": "iworkspace-llc/workload-intent"
         }
