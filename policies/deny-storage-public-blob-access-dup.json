@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "policyDefinitionName": "iws-deny-storage-public-blob-access",
+    "policyAssignmentName": "iws-deny-storage-public-blob-access-assignment"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "apiVersion": "2021-06-01",
+      "name": "[variables('policyDefinitionName')]",
+      "properties": {
+        "displayName": "iWorkspace: Storage accounts must disable public blob access",
+        "description": "Denies creation or update of storage accounts that have allowBlobPublicAccess set to true. Public blob containers expose data to anonymous access; this is rarely intentional and frequently a misconfiguration.",
+        "policyType": "Custom",
+        "mode": "All",
+        "metadata": {
+          "category": "Storage",
+          "version": "1.0.0",
+          "source": "iworkspace-llc/workload-intent"
+        },
+        "policyRule": {
+          "if": {
+            "allOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.Storage/storageAccounts"
+              },
+              {
+                "field": "Microsoft.Storage/storageAccounts/allowBlobPublicAccess",
+                "equals": true
+              }
+            ]
+          },
+          "then": {
+            "effect": "Deny"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyAssignments",
+      "apiVersion": "2022-06-01",
+      "name": "[variables('policyAssignmentName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName'))]"
+      ],
+      "properties": {
+        "displayName": "iWorkspace: Deny storage public blob access",
+        "description": "Assignment of the deny-storage-public-blob-access policy from workload-intent.",
+        "policyDefinitionId": "[resourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName'))]",
+        "metadata": {
+          "source": "iworkspace-llc/workload-intent"
+        }
+      }
+    }
+  ]
+}
